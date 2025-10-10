@@ -53,8 +53,8 @@ load_prompts(mcp_server)
 load_tools(mcp_server)
 
 # Create ASGI app from MCP server
-# Note: Setting path='/' here to avoid /mcp/mcp double path
-mcp_asgi_app = mcp_server.http_app(path='/')
+# Passing no path automatically hosts this at the /mcp route
+mcp_asgi_app = mcp_server.http_app()
 
 # Pass the MCP app's lifespan to FastAPI
 app = FastAPI(
@@ -79,9 +79,6 @@ app.add_middleware(
 
 app.include_router(router, prefix='/api', tags=['api'])
 
-# Mount the MCP server
-app.mount('/mcp', mcp_asgi_app)
-
 # ============================================================================
 # SERVE STATIC FILES FROM CLIENT BUILD DIRECTORY (MUST BE LAST!)
 # ============================================================================
@@ -91,8 +88,18 @@ app.mount('/mcp', mcp_asgi_app)
 if os.path.exists('client/build'):
   app.mount('/', StaticFiles(directory='client/build', html=True), name='static')
 
+# Combines both the routes from FastMCP and FastAPI
+combined_app = FastAPI(
+    title="Combined MCP App",
+    routes=[
+        *mcp_asgi_app.routes,  # MCP routes
+        *app.routes,      # Original API routes
+    ],
+    lifespan=mcp_asgi_app.lifespan,
+)
+
 if __name__ == '__main__':
   import uvicorn
 
   port = int(os.environ.get('DATABRICKS_APP_PORT', 8000))
-  uvicorn.run(app, host='0.0.0.0', port=port)
+  uvicorn.run(combined_app, host='0.0.0.0', port=port)
