@@ -38,9 +38,7 @@ print_timing() {
 print_timing "Loading environment variables"
 if [ -f .env.local ]
 then
-  set -a
   source .env.local
-  set +a
 fi
 
 # Validate required configuration
