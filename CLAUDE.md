@@ -92,7 +92,7 @@ nohup ./watch.sh --prod > /tmp/databricks-app-watch.log 2>&1 &
 ```bash
 # ✅ CORRECT - Always use uv run
 uv run python script.py
-uv run uvicorn server.app:app
+uv run uvicorn server.app:mcp_asgi_app
 uv run scripts/make_fastapi_client.py
 
 # ❌ WRONG - Never use python directly

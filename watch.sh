@@ -75,7 +75,7 @@ if [ "$PROD_MODE" = true ]; then
   echo "✅ Frontend built successfully"
   
   # In production mode, only start backend (frontend served by FastAPI)
-  uv run uvicorn server.app:app --reload --reload-dir server --host 0.0.0.0 --port 8000 &
+  uv run uvicorn server.app:mcp_asgi_app --reload --reload-dir server --host 0.0.0.0 --port 8000 &
   BACKEND_PID=$!
   
   echo "Production mode: Frontend will be served by FastAPI at http://localhost:8000"
@@ -86,7 +86,7 @@ else
   FRONTEND_PID=$!
 
   echo "🖥️ Starting backend development server..."
-  uv run uvicorn server.app:app --reload --reload-dir server --host 0.0.0.0 --port 8000 &
+  uv run uvicorn server.app:mcp_asgi_app --reload --reload-dir server --host 0.0.0.0 --port 8000 &
   BACKEND_PID=$!
   
   # MCP server is now integrated into FastAPI, no separate process needed
@@ -116,7 +116,7 @@ else
   FRONTEND_PORT=$(netstat -an | grep LISTEN | grep ':517[3-9]' | head -1 | sed 's/.*:\([0-9]*\).*/\1/' || echo "5173")
   echo "Frontend: http://localhost:$FRONTEND_PORT"
   echo "Backend:  http://localhost:8000"
-  echo "MCP Server: http://localhost:8000/mcp/"
+  echo "MCP Server: http://localhost:8000/mcp"
 fi
 echo "API Docs: http://localhost:8000/docs"
 echo ""
