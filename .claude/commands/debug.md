@@ -188,7 +188,7 @@ bun run type-check
 **Problem: Backend startup fails**
 ```bash
 # Test backend manually
-uv run uvicorn server.app:app --reload
+uv run uvicorn server.app:mcp_asgi_app --reload
 
 # Check Python dependencies
 uv run python -c "import fastapi; print('FastAPI OK')"
